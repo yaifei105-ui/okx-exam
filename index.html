@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>欧易商家考试 · 刷题与模拟考</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --line:#334155;
+    --text:#e2e8f0; --mute:#94a3b8; --accent:#22d3ee; --accent2:#a78bfa;
+    --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:linear-gradient(160deg,#0b1220,#111c34);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+  a{color:var(--accent);text-decoration:none}
+  button{font:inherit}
+  .container{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  h1{font-size:22px;margin:0}
+  h1 .sub{font-size:13px;color:var(--mute);font-weight:400;margin-left:8px}
+  .user-bar{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+  .user-bar input{background:#0b1220;border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:8px;outline:none;width:120px}
+  .user-bar input:focus{border-color:var(--accent)}
+  nav.tabs{display:flex;gap:6px;background:var(--panel);padding:6px;border-radius:14px;border:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+  nav.tabs button{background:transparent;border:0;color:var(--mute);padding:10px 16px;border-radius:10px;cursor:pointer;font-size:14px;flex:1;min-width:120px}
+  nav.tabs button.active{background:linear-gradient(135deg,#0ea5e9,#7c3aed);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  .panel h2{margin:0 0 12px;font-size:15px;color:var(--mute);font-weight:500;letter-spacing:.5px}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .btn{background:#0b1220;border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;transition:all .15s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border:0;color:#fff}
+  .btn.primary:hover{filter:brightness(1.1);color:#fff}
+  .btn.ghost{background:transparent}
+  .btn.danger{border-color:var(--err);color:var(--err)}
+  .btn.danger:hover{background:rgba(239,68,68,.1)}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;background:rgba(34,211,238,.12);color:var(--accent);border:1px solid rgba(34,211,238,.3)}
+  .pill.cat{background:rgba(167,139,250,.12);color:var(--accent2);border-color:rgba(167,139,250,.3)}
+  select,input[type="search"],input[type="number"]{background:#0b1220;border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:10px;font-size:13px;outline:none}
+  select:focus,input:focus{border-color:var(--accent)}
+  .qcard{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0}
+  .qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .qhead .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .qtext{font-size:17px;line-height:1.7;margin:6px 0 14px;font-weight:500}
+  .answer-box{background:#0b1220;border-left:3px solid var(--ok);padding:12px 14px;border-radius:0 10px 10px 0;line-height:1.7;white-space:pre-wrap;color:#bbf7d0}
+  .answer-box.hidden{display:none}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .progress-bar{height:6px;background:#0b1220;border-radius:99px;overflow:hidden;margin-top:8px}
+  .progress-bar > span{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .25s}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .stat .num{font-size:24px;font-weight:600;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat .lbl{font-size:12px;color:var(--mute);margin-top:2px}
+  textarea{width:100%;min-height:90px;background:#0b1220;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px;font:inherit;resize:vertical;outline:none}
+  textarea:focus{border-color:var(--accent)}
+  .quiz-result{padding:14px;border-radius:12px;margin-top:10px;border:1px solid}
+  .quiz-result.ok{border-color:var(--ok);background:rgba(34,197,94,.08)}
+  .quiz-result.miss{border-color:var(--warn);background:rgba(245,158,11,.08)}
+  .listitem{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .listitem:hover{background:rgba(255,255,255,.03)}
+  .listitem:last-child{border-bottom:0}
+  .listitem .lq{flex:1;line-height:1.5}
+  .empty{padding:36px;text-align:center;color:var(--mute)}
+  .footer{text-align:center;color:var(--mute);font-size:12px;margin-top:30px}
+  kbd{background:#0b1220;border:1px solid var(--line);padding:2px 6px;border-radius:4px;font-size:11px;color:var(--mute)}
+  details{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:10px}
+  details summary{cursor:pointer;color:var(--mute);font-size:13px}
+  @media (max-width:640px){
+    .container{padding:14px}
+    nav.tabs button{padding:8px 10px;font-size:13px}
+    h1{font-size:18px}
+    .qtext{font-size:15px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>欧易商家考试 · 刷题工具<span class="sub">本地进度自动保存 · 多人各自双击使用</span></h1>
+    <div class="user-bar">
+      <span>👤 当前用户</span>
+      <input id="userName" placeholder="昵称" maxlength="12" />
+      <span title="不同昵称的进度互相独立">🔒</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="practice" class="active">📚 刷题</button>
+    <button data-tab="exam">📝 模拟考试</button>
+    <button data-tab="wrong">❌ 错题本</button>
+    <button data-tab="search">🔍 搜索</button>
+    <button data-tab="all">📋 题目总览</button>
+  </nav>
+
+  <!-- 刷题 -->
+  <section id="tab-practice">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <label>顺序：</label>
+          <select id="orderMode">
+            <option value="seq">顺序</option>
+            <option value="random">随机</option>
+          </select>
+          <label>分类：</label>
+          <select id="catFilter"><option value="">全部</option></select>
+          <label>显示：</label>
+          <select id="showMode">
+            <option value="show">看答案</option>
+            <option value="hide">隐藏（自测）</option>
+          </select>
+        </div>
+        <button class="btn ghost" id="resetProgress" title="清空当前用户的刷题进度（不影响错题本）">↻ 重置进度</button>
+      </div>
+      <div class="progress-bar"><span id="progressFill" style="width:0%"></span></div>
+      <div style="margin-top:6px;font-size:12px;color:var(--mute)" id="progressText">0 / 0</div>
+    </div>
+
+    <div id="practiceCard"></div>
+  </section>
+
+  <!-- 模拟考试 -->
+  <section id="tab-exam" hidden>
+    <div class="panel">
+      <h2>选择考试模式</h2>
+      <div class="row" style="gap:12px">
+        <button class="btn primary" data-exam-mode="batch">📋 一次性 N 题，最后打分</button>
+        <button class="btn primary" data-exam-mode="instant">⚡ 一题一答，即时反馈</button>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <label>题目数：</label>
+        <input type="number" id="examCount" min="5" max="128" value="20" style="width:80px" />
+        <label>覆盖分类：</label>
+        <select id="examCat"><option value="">全部分类</option></select>
+        <span style="font-size:12px;color:var(--mute)">题目从题库中随机抽取，每次不重复</span>
+      </div>
+    </div>
+    <div id="examArea"></div>
+  </section>
+
+  <!-- 错题本 -->
+  <section id="tab-wrong" hidden>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <span class="pill" id="wrongCount">0 题</span>
+          <span style="color:var(--mute);font-size:12px;margin-left:8px">模考答错的题目会自动加入这里</span>
+        </div>
+        <div class="row">
+          <button class="btn" id="practiceWrong">📚 刷错题</button>
+          <button class="btn danger" id="clearWrong">清空错题本</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="wrongList"></div>
+  </section>
+
+  <!-- 搜索 -->
+  <section id="tab-search" hidden>
+    <div class="panel">
+      <input type="search" id="searchInput" placeholder="输入关键词搜索题目或答案，例如：验证单 / USDT / T+1" style="width:100%;font-size:15px" />
+    </div>
+    <div class="panel" id="searchList">
+      <div class="empty">输入关键词开始搜索</div>
+    </div>
+  </section>
+
+  <!-- 全部题目 -->
+  <section id="tab-all" hidden>
+    <div class="panel">
+      <div class="stats" id="catStats"></div>
+    </div>
+    <div class="panel" id="allList"></div>
+  </section>
+
+  <div class="footer">
+    本工具仅用于学习背题。题库共 <span id="totalQs">0</span> 道，进度保存在你浏览器本地（不上传）。
+  </div>
+</div>
+
+<script>
+window.__QUESTIONS__ = [{"id": "q7437ad29", "no": 1, "category": "商家规则", "question": "你是如何了解欧易平台的", "answer": "身边有现实生活中的朋友在做商家所以自己也想成为商家赚点差价"}, {"id": "qf700792f", "no": 2, "category": "币种与平台", "question": "你知道欧易平台是做什么的吗?", "answer": "知道，是做一些虚拟货币的交易。 (币种有比特币（BTC），以太坊（ETH），狗狗币（DOGE）等等)。  ｜  交易虚拟币的。"}, {"id": "q1365eec8", "no": 3, "category": "商家规则", "question": "欧易平台开户要几个USDT作为押金?", "answer": "10000个USDT(泰达币)。"}, {"id": "q25c52986", "no": 4, "category": "其他", "question": "欧易可以线下交易吗?", "answer": "不可以，线下交易是违法的。"}, {"id": "qf1ff7df1", "no": 5, "category": "商家规则", "question": "你是怎么知道欧易？", "answer": "身边有朋友在欧易做商家，自己也想成为商家来赚点差价"}, {"id": "q88e447f9", "no": 6, "category": "商家规则", "question": "你之前有在其他平台做过吗?", "answer": "没有，不过有在你们欧易平台学习过，现在想申请做商家"}, {"id": "q8d768f86", "no": 7, "category": "交易流程", "question": "可以代付吗?", "answer": "不可以，只能本人实名付款跟收款。"}, {"id": "q48f147ff", "no": 8, "category": "商家规则", "question": "如果在欧易买U成功后该怎么办", "answer": "先在平台点击我已经转账，告知商家查收，放币。"}, {"id": "q79f5e6ef", "no": 9, "category": "币种与平台", "question": "一个比特币大概价格？（看平台实时价格为准）", "answer": "大概人民币50万人民币左右（目前价格）"}, {"id": "q1b8fd332", "no": 10, "category": "商家规则", "question": "成为商家的步骤", "answer": "1.三级认证 2.10000usdt作为押金 3.购买20笔订单以上 4.成功率不能低于90%"}, {"id": "qce11e296", "no": 11, "category": "收付款方式", "question": "平台支持哪几种支付方式", "answer": "微信、支付宝、银行卡"}, {"id": "q05aeb0ff", "no": 12, "category": "验证单", "question": "客户已经给你转账了，你没有收到钱，怎么办", "answer": "找欧易客服，或者跟客户沟通，提供转账流水截图。"}, {"id": "q47525180", "no": 13, "category": "验证单", "question": "验证单金额要大于多少", "answer": "5001人民币以上"}, {"id": "q0baae131", "no": 14, "category": "交易流程", "question": "平台出金有几种方式?", "answer": "平台主要有c2c法币出售，和链上提币两种出金方式"}, {"id": "qe5876f8d", "no": 15, "category": "交易流程", "question": "平台入金有哪几种方式？", "answer": "入金有充币和买币两种方式"}, {"id": "q3156177d", "no": 16, "category": "币种与平台", "question": "欧易平台的代币是哪个?", "answer": "Ok币"}, {"id": "qe2d8acfa", "no": 17, "category": "商家规则", "question": "成为商家可以做什么?", "answer": "成为商家主要有买币有价格优势，可以发布委托单"}, {"id": "q4b5d322c", "no": 18, "category": "验证单", "question": "什么是验证单", "answer": "要求买家提供付款账户的收支明细，进行资金的安全验证"}, {"id": "q9eecc592", "no": 19, "category": "验证单", "question": "验证单是先接单还是先审核？", "answer": "先审核后接单"}, {"id": "q28652b7f", "no": 20, "category": "交易流程", "question": "在平台哪里绑定收付款方式？", "answer": "点击C2C买币，再选择个人设置里面绑定收付款方式"}, {"id": "q9b5a5b25", "no": 21, "category": "币种与平台", "question": "USDT对应的中文名是什么", "answer": "泰达币"}, {"id": "qba9b9dc3", "no": 22, "category": "验证单", "question": "在验证单未接单的情况下是否可以通过聊天窗口把收款方式发给对方", "answer": "不能"}, {"id": "qd02e0564", "no": 23, "category": "交易流程", "question": "收到买家的付款，订单已经取消了怎么处理", "answer": "找欧易客服，或者跟客户沟通。"}, {"id": "qe3442c7c", "no": 24, "category": "交易流程", "question": "遇到客户非实名付款怎么办？", "answer": "找欧易客服，提供收款凭证"}, {"id": "q301a6634", "no": 25, "category": "商家规则", "question": "您的1万个U的保证金是购买还是充值的？", "answer": "自己购买的。"}, {"id": "q908e32d7", "no": 26, "category": "交易流程", "question": "能否非实名付款？", "answer": "不能， （如果收到对面非实名付款的钱，需要给对方原路退回，并让对方取消订单）"}, {"id": "qe5d04e8a", "no": 27, "category": "交易流程", "question": "您交易订单，在对方给您转完钱后需要干什么？", "answer": "需要先看转款人的名字核实是否非实名付款，再确认金额，然后没问题点击放币。"}, {"id": "q2c6e3389", "no": 28, "category": "交易类型", "question": "在平台法币交易有没有手续费？", "answer": "没有"}, {"id": "qbf561db9", "no": 29, "category": "交易流程", "question": "在平台有哪些收付款方式?", "answer": "银行卡 微信 支付宝"}, {"id": "q8281b5a8", "no": 30, "category": "交易流程", "question": "你在平台绑定了哪些收付款方式", "answer": "微信 支付宝"}, {"id": "q1120e08e", "no": 31, "category": "交易流程", "question": "请问如何绑定您的收付款方式？", "answer": "首先在首页里面点我要买币，然后选C2C买币，在右下角点我的，点开里面找到添加收付款，点击添加收付款就可以绑定。"}, {"id": "qc4a33b25", "no": 32, "category": "币种与平台", "question": "c2c可以交易什么币种？", "answer": "BTC（比特币） ETH（以太坊） USDT USDC等"}, {"id": "qa8db7932", "no": 33, "category": "币种与平台", "question": ".c2c可以购买狗狗币吗？", "answer": "不能，c2c只能交易btc.eth.usdc.usdt"}, {"id": "q5d3a453e", "no": 34, "category": "商家规则", "question": "申请商家是在哪里申请的？", "answer": "在C2C买币的首页右下方点开我的，点击申请成为商家"}, {"id": "qc1398b1f", "no": 35, "category": "商家规则", "question": "平台除了C2C买币还有什么交易？", "answer": "快捷买币。 （区别就是C2C交易是自己选择商家，快捷交易是平台自动匹配的商家）"}, {"id": "q5d093e5c", "no": 36, "category": "交易流程", "question": "您是否了解在平台交易有冻卡的风险？", "answer": "了解 （要确认对方是非实名付款，交易的时候不备注敏感字眼）"}, {"id": "qea6351b6", "no": 37, "category": "商家规则", "question": "商家在什么时候可以验证对方流水？", "answer": "在发布委托单时开启验证单功能  ｜  在开启验证单的情况下"}, {"id": "q8289eecf", "no": 38, "category": "验证单", "question": "验证单开启的条件？", "answer": "在出售的金额达到5001元以上。"}, {"id": "qc12ae1e2", "no": 39, "category": "交易流程", "question": "你在和其他用户交易的时候遇到问题该怎么办？", "answer": "先于对方进行沟通协商，不行的话再点击订单右下角的需要帮助，申诉找客服协助处理"}, {"id": "qc61796c5", "no": 40, "category": "商家规则", "question": "你在平台交易的流程是什么?", "answer": "先点我要买币，点买币，然后选择币种，找一个合适自己金额的商家进行下单。"}, {"id": "qf8bce056", "no": 41, "category": "验证单", "question": "交易过程是先接单还是先查看流水?", "answer": "先查看流水通过后，再接单，再发收款账号，转款后再点击确认收款。"}, {"id": "qe98b2775", "no": 42, "category": "交易流程", "question": "交易订单卖家不放币怎么处理？", "answer": "付款成功截图,提交催币(15分钟之后自动放币)联系卖家放币或者联系平台客服处理."}, {"id": "qe4d26732", "no": 43, "category": "交易流程", "question": "买家交易过程超时怎么处理？", "answer": "联系客户退钱给他，或者跟客户沟通重新下单， 联系在线客服处理也可以"}, {"id": "q743df523", "no": 44, "category": "其他", "question": "线上交易和线下交易的区别是什么？", "answer": "线上交易就是平台上交易，线下交易是通过转地址交易，是不允许的，我们只允许线上交易。"}, {"id": "qf34c446d", "no": 45, "category": "验证单", "question": "验证单的作用是什么？", "answer": "防止黑钱洗钱，不干净的钱。"}, {"id": "q792c1a4a", "no": 46, "category": "交易流程", "question": "假如我像你购买,我不小心用别人的给你付款了,你发现了要怎么处理?钱可以退到我账号上吗？", "answer": "谁付款的就直接退款给他，资金原路退回。 截图非实名付款页面，提交申述，然后在按照客服要求资金原路退回，退回后截图上去客服人员协助取消订单。"}, {"id": "q899da667", "no": 47, "category": "商家规则", "question": "怎么更改商家收款码？", "answer": "1.手机:打开欧易点击c2c买币，点右下角的更多，在点支付方式，点击解绑原来的收款码，在添加收款账号。"}, {"id": "q548df993", "no": 48, "category": "商家规则", "question": "商家可以如何买币？", "answer": "商家可以发布委托单进行买币"}, {"id": "q615c1cf2", "no": 49, "category": "币种与平台", "question": "卖家要低价卖给你可以吗？", "answer": "不可以的，不能扰乱市场行情。（他为什么要低价卖给我，那是USDT有问题）"}, {"id": "q79b02b2a", "no": 50, "category": "交易流程", "question": "在哪里联系客服？", "answer": "打开欧易首页 点左上角九个点，点帮助中心找到在线客服"}, {"id": "q3eff34d3", "no": 51, "category": "商家规则", "question": "快捷交易和c2c交易的区别。", "answer": "快捷交易是用户输入金额后由系统匹配的快捷交易，C2C交易是由商家发布委托单在平台由用户灵活选择。"}, {"id": "q1c61889a", "no": 52, "category": "商家规则", "question": "保证金花了多少钱", "answer": "7万多人民币"}, {"id": "q3d6a1c27", "no": 53, "category": "商家规则", "question": "最大的一笔订单金额是多少？最后一笔金额多少？", "answer": "（自己买保证金的时候记到来）"}, {"id": "qac521cea", "no": 54, "category": "申请书与个人信息", "question": "你的收入来源?", "answer": "（自己吹牛，比如自己的实体生意收入呀，还有自己的存款呀什么的）"}, {"id": "q2b34f520", "no": 55, "category": "币种与平台", "question": "本平台有什么金融服务？", "answer": "有6个:简单赚币 链上赚币，ETH质押，结构化产品，借贷，空投（jumpstart）。"}, {"id": "qd16a92d7", "no": 56, "category": "交易类型", "question": "什么是牛市，什么是熊市？", "answer": "牛市就是连续几天的暴涨 熊市是连续几天的暴跌"}, {"id": "qf85a710a", "no": 57, "category": "交易流程", "question": "t➕N有哪几种结算方式？", "answer": "现货T0结算，期权T1结算，期货合约T+2结算，提币T1~T7"}, {"id": "qba978975", "no": 58, "category": "交易流程", "question": "为什么买完币以后不能马上使用？", "answer": "账户触发了风控机制，根据系统提示联系平台客服处理"}, {"id": "q4335bb37", "no": 59, "category": "申请书与个人信息", "question": "紧急联系人 ？", "answer": "朋友或者老公老婆的名字（全名➕手机号吗都要背下来）"}, {"id": "q480e2edb", "no": 60, "category": "商家规则", "question": "保证金多少 ？", "answer": "10000个USDT"}, {"id": "q41006ede", "no": 61, "category": "其他", "question": "怎么获得的 ？", "answer": "自己在平台上购买的"}, {"id": "qd65900a9", "no": 62, "category": "其他", "question": "可以不可以把平台的订单弄到别的平台去交易？", "answer": "不可以的"}, {"id": "qf144bbd3", "no": 63, "category": "交易流程", "question": "t➕1是什么意思？", "answer": "买币成功1个工作日后才能提币到其他交易所或钱包 | 一个工作日内不能提币到其它钱包交易所"}, {"id": "qd4d93c60", "no": 64, "category": "币种与平台", "question": "平台哪个币量最大？", "answer": "USDT"}, {"id": "qe2c88124", "no": 65, "category": "币种与平台", "question": "平台那个币价值最大？", "answer": "BTC比特币（现在都50多万元一个）"}, {"id": "qe9f9a443", "no": 66, "category": "币种与平台", "question": "USDT是属于哪家公司的？", "answer": "属于泰达公司的"}, {"id": "qebc5dc13", "no": 67, "category": "商家规则", "question": "成为商家想交易那种币？", "answer": "想交易USDT，因为价格波动小，流通率高"}, {"id": "q0dff983d", "no": 68, "category": "交易类型", "question": "你的帐号注册时间？", "answer": "（C2C我的页面可以看到具体注册时间日期）"}, {"id": "q9c7d6c36", "no": 69, "category": "币种与平台", "question": "c2c可以买什么币？", "answer": "usdt usdc btc eth 等"}, {"id": "q79f83072", "no": 70, "category": "交易流程", "question": "可不可以非实名收款？", "answer": "可以非实名收款"}, {"id": "q1030f130", "no": 71, "category": "交易类型", "question": "c2c是什么？", "answer": "使用法定货币买卖数字资产的一种方式"}, {"id": "qd0bf9aa6", "no": 72, "category": "商家规则", "question": "商家可以用他人账号进行收款吗？", "answer": "可以"}, {"id": "qaf6ec7d5", "no": 73, "category": "交易流程", "question": "用户可以用别人的账号付款吗", "answer": "不可以，必须同实名付款"}, {"id": "qb82876b1", "no": 74, "category": "币种与平台", "question": "usdt可以换成别的币吗？", "answer": "可以换成btc 以太坊等"}, {"id": "q231f8d20", "no": 75, "category": "T+N 与风控", "question": "交易的时候遇到过t+几？", "answer": "遇到过，一般都是t+1"}, {"id": "q0d8f1077", "no": 76, "category": "交易流程", "question": "t➕n是什么意思？", "answer": "系统风控，限制提币，不影响平台内使用"}, {"id": "q07be38a8", "no": 77, "category": "交易流程", "question": "可以通过聊天窗口发收款码吗", "answer": "可以通过窗口发码"}, {"id": "q8a9729f5", "no": 78, "category": "账户与登录", "question": "你的ID是哪里的？", "answer": "香港id (用的那里的id下载就是说那里的)"}, {"id": "q14bed9ec", "no": 79, "category": "交易类型", "question": "平台有哪些交易？", "answer": "平台可以现货，期货，期权，合约，杠杆，法币交易"}, {"id": "q0bd2f0b0", "no": 80, "category": "商家规则", "question": "你有朋友在做商家吗？", "answer": "有的，有现实生活中的朋友在做商家"}, {"id": "q4c1fb606", "no": 81, "category": "商家规则", "question": "你为啥想做商家？", "answer": "赚点差价"}, {"id": "qd52c0bf4", "no": 82, "category": "币种与平台", "question": "现在价值最大的虚拟货币", "answer": "BTC 比特币"}, {"id": "qa9699427", "no": 83, "category": "商家规则", "question": "是不是所有5000元以上的订单都需要验证？", "answer": "不一定所有五千元以上订单都需要验证，商家设置五千元以上需要验证就验证，没设置就不用验证"}, {"id": "q7e050579", "no": 84, "category": "验证单", "question": "什么是验证单，验证的条件是什么？", "answer": "验证单是指5001元以上订单，要求客户账户3天内没新的存款"}, {"id": "qb7d13693", "no": 85, "category": "商家规则", "question": "你成为商家后准备交易那种虚拟货币，为什么？", "answer": "暂时准备交易USDT，流通率高，价格稳定，后期经验足再考虑其他币种"}, {"id": "qa529f0c2", "no": 86, "category": "交易流程", "question": "能不能非实名收款", "answer": "可以非实名收款，但是要同实名付款"}, {"id": "q5ee57202", "no": 87, "category": "币种与平台", "question": "什么是稳定币？", "answer": "稳定币交易量大，流通性高"}, {"id": "q7a89c4d5", "no": 88, "category": "币种与平台", "question": "稳定币有哪几种？", "answer": "稳定币有USDT 和USDC"}, {"id": "qa115d152", "no": 89, "category": "交易类型", "question": "平台除了快捷交易和c2c还有哪几种交易方式", "answer": "除了快捷交易，C2C交易，还有大宗交易"}, {"id": "q856c6f3b", "no": 90, "category": "币种与平台", "question": "BTC和USDC的区别是什么？", "answer": "BTC是比特币，USDC也是数字资产的一种,BTC波动较大，更普遍是作为投资货币，usdc波动较小，普遍是用来作为交易货币。"}, {"id": "q151dde51", "no": 91, "category": "商家规则", "question": "商家违反平台规则会有什么后果？", "answer": "这个视情况来定，情节轻微会被警告，限制c2c交易功能，情节严重会冻结账户清退商家身份，冻结保证金6个月（轻微是指取消单多，客户申诉订单多。再就是刷单会限制c2c交易，引流会冻结账户清退商家冻结保证金）"}, {"id": "q8e9509cf", "no": 92, "category": "商家规则", "question": "退商之后保证几天内可以取出？", "answer": "主动退商保证金7天后可以取出"}, {"id": "q481b6ad5", "no": 93, "category": "T+N 与风控", "question": "t+N一般是多少天？", "answer": "一般的话是t+1，t+3,t+7."}, {"id": "q996992a8", "no": 94, "category": "T+N 与风控", "question": "买完币多久可以使用？", "answer": "买完在交易所内可以正常使用，如果要转出别的交易所或者钱包，看系统有没有限制T+N."}, {"id": "q7574c9e7", "no": 95, "category": "交易类型", "question": "大宗交易一般多少金额？", "answer": "十万人民币起步"}, {"id": "q701a11b8", "no": 96, "category": "币种与平台", "question": "比特币的总产量是多少？", "answer": "2100万枚"}, {"id": "qb65dcb1e", "no": 97, "category": "商家规则", "question": "你的答案哪里知道的？", "answer": "主要都是自己在平台上学习的操作了解的，自己以前有炒币经验，还有问了在线客服申请商家的规则，学习后就知道的"}, {"id": "q961c97d5", "no": 98, "category": "商家规则", "question": "c2c有哪两种盘口方式？", "answer": "有买家和卖家"}, {"id": "qb8c227ab", "no": 99, "category": "交易流程", "question": "如果你向卖家付款之后导致卖家账户冻结之后该怎么处理？", "answer": "首先和买家沟通了解冻结详情后在向客服报备，然后在寻求当地司法部门协助"}, {"id": "q9a978a98", "no": 100, "category": "商家规则", "question": "如果客户在c2c交易的安全性表示担忧你会如何通过沟通或者动作来打消客户的顾虑？", "answer": "我们成为商家是向平台缴纳了保证金并且是经过平台考试认证的，安全方面您可以放心，有问题的话我们可以申请平台客服来进行处理。"}, {"id": "q305ec375", "no": 101, "category": "账户与登录", "question": "平台有哪几种登入方式？", "answer": "平台有邮箱和手机验证码，外部密钥和谷歌这几种方式"}, {"id": "q7ed664ec", "no": 102, "category": "T+N 与风控", "question": "你使用微信支付，如何防止被风控", "answer": "加上微信好友时可以适当用点问候语，比如好久不见，你那边天气怎么样等等，不要聊敏感字眼，提前把微信的资金放进零钱通里面沉淀24小时以上这样会减少风控的几率，不要和同一个人频繁的交易"}, {"id": "qd67cfb51", "no": 103, "category": "交易类型", "question": "点击c2c里面之后有几个区？", "answer": "进去c2c里面之后有自选区，快捷区，VIP尊享区"}, {"id": "q50f6be6f", "no": 104, "category": "商家规则", "question": "初级商家能够购买和售卖的委托单数量是多少？", "answer": "总计2单"}, {"id": "q0285e52d", "no": 105, "category": "商家规则", "question": "成为初级商家30天内单笔购买的委托单限额是多少？", "answer": "十万人民币"}, {"id": "q61674a71", "no": 106, "category": "商家规则", "question": "成为初级商家30天后单笔购买的委托单限额是多少？", "answer": "两百万人民币"}, {"id": "qa515d198", "no": 107, "category": "商家规则", "question": "成为初级商家30天内单笔售卖的委托单限额是多少？", "answer": "两百万人民币"}, {"id": "qca6e1f4e", "no": 108, "category": "商家规则", "question": "问;成为初级商家30天内每天购买总限额是多少？", "answer": "二十五万人民币"}, {"id": "q1ef53417", "no": 109, "category": "商家规则", "question": "成为初级商家30天后每天购买总限额是多少？", "answer": "无限制"}, {"id": "q58ec5576", "no": 110, "category": "商家规则", "question": "主动退商之后多久可以重新申请成为商家", "answer": "30天后"}, {"id": "q0fce4138", "no": 111, "category": "商家规则", "question": "如果商家通过之后你打算如何进行商家交易？需要进行那些步骤？", "answer": "我会更深入了解商家规则，在c2c我的里面添加自己有效的收付款方式，然后发布委托单进行交易即可"}, {"id": "q943e2c2a", "no": 112, "category": "商家规则", "question": "初级商家和钻石商家有什么区别？", "answer": "初级商家能够购买和售卖的委托单是两单，钻石商家能够购买售卖的委托单是4单"}, {"id": "qcb0bbd21", "no": 113, "category": "交易流程", "question": "收到买家实名付款之后是否可以未经同意原路退回？", "answer": "不可以"}, {"id": "q961a7bbc", "no": 114, "category": "收付款方式", "question": "对方是使用银行卡支付的时候是否可以要求对方提供电话号码？", "answer": "不可以"}, {"id": "qc63a6cf2", "no": 115, "category": "其他", "question": "平台最小可以交易金额是多少？最大交易的金额是多少？", "answer": "最小交易金额10元人民币，最大交易金额500万人民币"}, {"id": "q4f99fac9", "no": 116, "category": "验证单", "question": "验证单需要多少金额才能够开启？", "answer": "金额需要大于5001以上的订单才能开启"}, {"id": "qfabc52fd", "no": 117, "category": "交易流程", "question": "在c2c交易的时候，如果发现银行app显示非柜面交易遇到这种情况怎么处理？", "answer": "首先了解银行卡不能非柜面交易的原因看是否能够解除，然后和对方协商沟通看能不能使用微信或者支付宝交易，不行的话可以去银行柜台进行交易，付款时不备注敏感字眼"}, {"id": "qf2259063", "no": 118, "category": "商家规则", "question": "你作为商家，用户绑定的是银行卡支付方式，请描述一下交易过程", "answer": "先绑定有效的银行卡收款账户，发布委托单的时候选择银行卡收款，再和用户沟通付款时不要备注敏感字眼，用户付款之后核实是否实名付款和付款金额，没问题之后再点击我要放币"}, {"id": "q1a126232", "no": 119, "category": "交易流程", "question": "什么是链上提币？和C2C法币出售有什么区别？", "answer": "链上提币是把币提到其他交易所或钱包，不经过法币: C2C法币出售是在平台内卖给其他用户，换成人民币。 区别:一个换法币，一个不换法币。"}, {"id": "q1a5a5969", "no": 120, "category": "商家规则", "question": "假如有现实生活中的朋友想跟你在平台一对一进行交易，你作为商家会如何操作？", "answer": "我会单独开一个委托单，开委托单时选择不进入盘口，然后再分享委托单二维码进行交易即可。"}, {"id": "qfe73ab0a", "no": 121, "category": "商家规则", "question": "作为商家该如何审核用户的资金流水？", "answer": "可以从用户流水中资金沉淀的天数来判断用户的资金来源是不是正常的，或者看是否有理财，合约，自由资产的交易"}, {"id": "qa7ed90ab", "no": 122, "category": "商家规则", "question": "是否可以非实名付款？什么场景下可以非实名付款？", "answer": "一般情况下不可以非实名付款，需要有特约的群组商家可以使用团队付款卡"}, {"id": "qb04eedaf", "no": 123, "category": "账户与登录", "question": "如何下载欧意平台？有哪几种下载方式？", "answer": "苹果是在苹果商店下载的，安卓是通过链接进入官网下载的"}, {"id": "q481a05fe", "no": 124, "category": "商家规则", "question": "如何确保作为商家在市场波动较大的时候也能及时完成交易并且和用户保持良好沟通", "answer": "及时观察市场的价格波动进行调整，和用户出现价格分歧时主动和用户进行沟通，协商不了可以联系客服进行处理"}, {"id": "qc8f31b81", "no": 125, "category": "商家规则", "question": "哪种行为会被清退商家身份 1.完成率较低 2.恶意刷单 3.非验证单查流水", "answer": "恶意刷单会被清退商家身份"}];
+
+/* ============================================================
+ *  状态：每个用户昵称对应一份独立 LocalStorage namespace
+ * ============================================================ */
+const STORE_PREFIX = "okx_exam_v1::";
+let currentUser = "";
+let currentIndex = 0;
+let practiceList = [];   // 当前刷题序列（顺序或随机后）
+let examState = null;    // 模考运行时
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function userKey(name){ return STORE_PREFIX + (name || "default"); }
+function loadUserData(){
+  try{
+    const raw = localStorage.getItem(userKey(currentUser));
+    if(!raw) return defaultUserData();
+    const d = JSON.parse(raw);
+    return Object.assign(defaultUserData(), d);
+  }catch(e){ return defaultUserData(); }
+}
+function defaultUserData(){
+  return { practiceIdx: 0, orderMode: "seq", catFilter: "", showMode: "show", wrong: [], lastExam: null };
+}
+function saveUserData(d){
+  localStorage.setItem(userKey(currentUser), JSON.stringify(d));
+}
+function patchUserData(patch){
+  const d = loadUserData();
+  Object.assign(d, patch);
+  saveUserData(d);
+  return d;
+}
+
+/* ============================================================
+ *  题库 + 分类
+ * ============================================================ */
+const QUESTIONS = window.__QUESTIONS__ || [];
+const CATEGORIES = [...new Set(QUESTIONS.map(q => q.category))];
+
+function fillCategorySelects(){
+  const opts = '<option value="">全部</option>' + CATEGORIES.map(c =>
+    `<option value="${c}">${c} (${QUESTIONS.filter(q=>q.category===c).length})</option>`
+  ).join("");
+  $("#catFilter").innerHTML = opts;
+  $("#examCat").innerHTML = '<option value="">全部分类</option>' + CATEGORIES.map(c =>
+    `<option value="${c}">${c}</option>`).join("");
+}
+
+function getFilteredList(catFilter){
+  if(!catFilter) return QUESTIONS.slice();
+  return QUESTIONS.filter(q => q.category === catFilter);
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ============================================================
+ *  Tabs
+ * ============================================================ */
+$$("#tabs button").forEach(b => b.addEventListener("click", () => {
+  $$("#tabs button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  const tab = b.dataset.tab;
+  ["practice","exam","wrong","search","all"].forEach(t => {
+    $("#tab-" + t).hidden = (t !== tab);
+  });
+  if(tab === "wrong") renderWrong();
+  if(tab === "all") renderAll();
+}));
+
+/* ============================================================
+ *  刷题
+ * ============================================================ */
+function rebuildPracticeList(){
+  const d = loadUserData();
+  let list = getFilteredList(d.catFilter);
+  if(d.orderMode === "random") list = shuffle(list);
+  practiceList = list;
+  if(currentIndex >= list.length) currentIndex = 0;
+}
+
+function renderPractice(){
+  const d = loadUserData();
+  $("#orderMode").value = d.orderMode;
+  $("#catFilter").value = d.catFilter;
+  $("#showMode").value = d.showMode;
+  if(!practiceList.length) rebuildPracticeList();
+  const total = practiceList.length;
+  const idx = Math.min(currentIndex, total - 1);
+  const q = practiceList[idx];
+  $("#progressFill").style.width = total ? ((idx + 1) / total * 100) + "%" : "0%";
+  $("#progressText").textContent = `${idx + 1} / ${total}（当前用户：${currentUser || "默认"}）`;
+  if(!q){
+    $("#practiceCard").innerHTML = '<div class="panel empty">该分类下暂无题目</div>';
+    return;
+  }
+  const hidden = d.showMode === "hide";
+  $("#practiceCard").innerHTML = `
+    <div class="qcard">
+      <div class="qhead">
+        <div class="meta">
+          <span class="pill">第 ${q.no} 题</span>
+          <span class="pill cat">${q.category}</span>
+        </div>
+        <span style="color:var(--mute);font-size:12px">${idx+1}/${total}</span>
+      </div>
+      <div class="qtext">${escapeHtml(q.question)}</div>
+      <div class="answer-box ${hidden ? 'hidden' : ''}" id="answerBox"><strong>参考答案：</strong>\n${escapeHtml(q.answer)}</div>
+      <div class="toolbar">
+        <div class="row">
+          <button class="btn" id="prevBtn">← 上一题</button>
+          <button class="btn primary" id="nextBtn">下一题 →</button>
+          ${hidden ? '<button class="btn" id="toggleAns">👀 显示答案</button>' : '<button class="btn ghost" id="toggleAns">隐藏答案</button>'}
+        </div>
+        <span style="color:var(--mute);font-size:12px">快捷键：← / → 翻页，空格切换答案</span>
+      </div>
+    </div>
+  `;
+  $("#prevBtn").onclick = () => { currentIndex = (idx - 1 + total) % total; renderPractice(); };
+  $("#nextBtn").onclick = () => { currentIndex = (idx + 1) % total; patchUserData({practiceIdx:currentIndex}); renderPractice(); };
+  $("#toggleAns").onclick = () => {
+    const box = $("#answerBox");
+    box.classList.toggle("hidden");
+  };
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+/* 刷题事件 */
+["orderMode","catFilter","showMode"].forEach(id => {
+  $("#" + id).addEventListener("change", e => {
+    const v = e.target.value;
+    const patch = {};
+    patch[id] = v;
+    patchUserData(patch);
+    if(id !== "showMode"){ currentIndex = 0; rebuildPracticeList(); }
+    renderPractice();
+  });
+});
+$("#resetProgress").onclick = () => {
+  if(!confirm("确认清空 " + (currentUser||"默认") + " 的刷题进度？（错题本不受影响）")) return;
+  currentIndex = 0;
+  patchUserData({practiceIdx:0});
+  renderPractice();
+};
+
+document.addEventListener("keydown", e => {
+  if(["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)) return;
+  if($("#tab-practice").hidden) return;
+  if(e.key === "ArrowLeft") $("#prevBtn")?.click();
+  else if(e.key === "ArrowRight") $("#nextBtn")?.click();
+  else if(e.code === "Space"){ e.preventDefault(); $("#toggleAns")?.click(); }
+});
+
+/* ============================================================
+ *  模拟考试
+ * ============================================================ */
+$$('[data-exam-mode]').forEach(b => b.addEventListener("click", () => startExam(b.dataset.examMode)));
+
+function startExam(mode){
+  const n = Math.max(1, Math.min(QUESTIONS.length, parseInt($("#examCount").value)||20));
+  const cat = $("#examCat").value;
+  const pool = getFilteredList(cat);
+  if(pool.length < n){
+    alert(`该分类只有 ${pool.length} 题，少于设定的 ${n} 题。请减少题目数或选其他分类。`);
+    return;
+  }
+  const picked = shuffle(pool).slice(0, n);
+  examState = { mode, list: picked, idx: 0, answers: new Array(picked.length).fill(""), submitted: false, judge: new Array(picked.length).fill(null) };
+  renderExam();
+}
+
+function renderExam(){
+  if(!examState){ $("#examArea").innerHTML = ""; return; }
+  const { mode, list, idx, answers, submitted, judge } = examState;
+  if(mode === "instant"){
+    const q = list[idx];
+    const done = idx >= list.length;
+    if(done){
+      const correct = judge.filter(x=>x==="ok").length;
+      $("#examArea").innerHTML = examSummaryHtml(list, answers, judge, correct);
+      bindSummary();
+      return;
+    }
+    $("#examArea").innerHTML = `
+      <div class="panel">
+        <div class="qhead">
+          <div class="meta">
+            <span class="pill">即时反馈模式</span>
+            <span class="pill cat">${list[idx].category}</span>
+          </div>
+          <span style="color:var(--mute);font-size:12px">${idx+1} / ${list.length}</span>
+        </div>
+        <div class="qtext">${escapeHtml(q.question)}</div>
+        <textarea id="examAns" placeholder="请用自己的话作答，然后点【对照答案】查看标准答案并自评对错"></textarea>
+        <div class="toolbar">
+          <button class="btn primary" id="checkBtn">对照答案</button>
+        </div>
+        <div id="examFeedback"></div>
+      </div>
+    `;
+    $("#checkBtn").onclick = () => {
+      const v = $("#examAns").value.trim();
+      examState.answers[idx] = v;
+      $("#examFeedback").innerHTML = `
+        <div class="answer-box" style="margin-top:12px"><strong>参考答案：</strong>\n${escapeHtml(q.answer)}</div>
+        <div class="row" style="margin-top:10px">
+          <span style="color:var(--mute)">你觉得自己答的：</span>
+          <button class="btn" data-judge="ok" style="border-color:var(--ok);color:var(--ok)">✅ 对</button>
+          <button class="btn" data-judge="miss" style="border-color:var(--err);color:var(--err)">❌ 错</button>
+        </div>
+      `;
+      $$("[data-judge]").forEach(btn => btn.onclick = () => {
+        const j = btn.dataset.judge;
+        examState.judge[idx] = j;
+        if(j === "miss") addWrong(q.id);
+        examState.idx++;
+        renderExam();
+      });
+    };
+  } else {
+    // batch
+    if(submitted){
+      const correct = judge.filter(x=>x==="ok").length;
+      $("#examArea").innerHTML = examSummaryHtml(list, answers, judge, correct);
+      bindSummary();
+      return;
+    }
+    $("#examArea").innerHTML = `
+      <div class="panel">
+        <h2>共 ${list.length} 题，全部填完后点底部"提交考试"</h2>
+        <div id="examQs">
+          ${list.map((q,i)=>`
+            <div class="qcard">
+              <div class="qhead">
+                <div class="meta">
+                  <span class="pill">第 ${i+1} 题</span>
+                  <span class="pill cat">${q.category}</span>
+                </div>
+              </div>
+              <div class="qtext">${escapeHtml(q.question)}</div>
+              <textarea data-i="${i}" placeholder="作答...">${escapeHtml(answers[i]||"")}</textarea>
+            </div>
+          `).join("")}
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" id="submitExam">📝 提交考试，对照答案</button>
+          <button class="btn ghost" id="cancelExam">取消</button>
+        </div>
+      </div>
+    `;
+    $$("#examQs textarea").forEach(t => t.addEventListener("input", e => {
+      examState.answers[parseInt(e.target.dataset.i)] = e.target.value;
+    }));
+    $("#submitExam").onclick = () => { examState.submitted = true; renderExam(); };
+    $("#cancelExam").onclick = () => { if(confirm("放弃本次考试？")){ examState = null; $("#examArea").innerHTML=""; } };
+  }
+}
+
+function examSummaryHtml(list, answers, judge, correct){
+  const total = list.length;
+  return `
+    <div class="panel">
+      <h2>考试结果</h2>
+      <div class="stats">
+        <div class="stat"><div class="num">${total}</div><div class="lbl">总题数</div></div>
+        <div class="stat"><div class="num">${correct}</div><div class="lbl">答对</div></div>
+        <div class="stat"><div class="num">${total - correct}</div><div class="lbl">答错/未判</div></div>
+        <div class="stat"><div class="num">${total ? Math.round(correct/total*100) : 0}%</div><div class="lbl">正确率</div></div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="reExam">🔁 再来一次</button>
+        <button class="btn" id="exitExam">返回</button>
+      </div>
+    </div>
+    ${list.map((q,i)=>{
+      const j = judge[i];
+      const cls = j === "ok" ? "ok" : "miss";
+      const userAns = answers[i] ? escapeHtml(answers[i]) : "<em style='color:var(--mute)'>（未作答）</em>";
+      return `
+        <div class="qcard">
+          <div class="qhead">
+            <div class="meta">
+              <span class="pill">第 ${i+1} 题</span>
+              <span class="pill cat">${q.category}</span>
+              ${j === "ok" ? '<span class="pill" style="background:rgba(34,197,94,.15);color:var(--ok);border-color:rgba(34,197,94,.3)">✅ 已答对</span>' : ''}
+              ${j === "miss" ? '<span class="pill" style="background:rgba(239,68,68,.15);color:var(--err);border-color:rgba(239,68,68,.3)">❌ 已加入错题本</span>' : ''}
+              ${j === null ? '<span class="pill" style="background:rgba(245,158,11,.15);color:var(--warn);border-color:rgba(245,158,11,.3)">待自评</span>' : ''}
+            </div>
+          </div>
+          <div class="qtext">${escapeHtml(q.question)}</div>
+          <div style="background:#0b1220;border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 10px 10px 0;margin-bottom:8px"><strong style="color:var(--accent)">你的答案：</strong>\n${userAns}</div>
+          <div class="answer-box"><strong>参考答案：</strong>\n${escapeHtml(q.answer)}</div>
+          ${j === null ? `
+            <div class="row" style="margin-top:10px">
+              <span style="color:var(--mute)">自评：</span>
+              <button class="btn" data-bj="ok" data-i="${i}" data-qid="${q.id}" style="border-color:var(--ok);color:var(--ok)">✅ 对</button>
+              <button class="btn" data-bj="miss" data-i="${i}" data-qid="${q.id}" style="border-color:var(--err);color:var(--err)">❌ 错</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join("")}
+  `;
+}
+
+function bindSummary(){
+  $("#reExam")?.addEventListener("click", () => startExam(examState.mode));
+  $("#exitExam")?.addEventListener("click", () => { examState = null; $("#examArea").innerHTML=""; });
+  $$('[data-bj]').forEach(btn => btn.onclick = () => {
+    const i = parseInt(btn.dataset.i);
+    const qid = btn.dataset.qid;
+    const j = btn.dataset.bj;
+    examState.judge[i] = j;
+    if(j === "miss") addWrong(qid);
+    renderExam();
+  });
+}
+
+/* ============================================================
+ *  错题本
+ * ============================================================ */
+function addWrong(qid){
+  const d = loadUserData();
+  if(!d.wrong.includes(qid)){ d.wrong.push(qid); saveUserData(d); }
+}
+function removeWrong(qid){
+  const d = loadUserData();
+  d.wrong = d.wrong.filter(x => x !== qid);
+  saveUserData(d);
+}
+function renderWrong(){
+  const d = loadUserData();
+  $("#wrongCount").textContent = d.wrong.length + " 题";
+  if(!d.wrong.length){
+    $("#wrongList").innerHTML = '<div class="empty">还没有错题。完成模拟考试时自评为"错"会自动加入这里。</div>';
+    return;
+  }
+  const items = d.wrong.map(qid => QUESTIONS.find(q => q.id === qid)).filter(Boolean);
+  $("#wrongList").innerHTML = items.map(q => `
+    <div class="listitem">
+      <div class="lq">
+        <div><span class="pill cat">${q.category}</span> <strong>${escapeHtml(q.question)}</strong></div>
+        <details><summary>查看答案</summary><div style="margin-top:6px;color:#bbf7d0">${escapeHtml(q.answer)}</div></details>
+      </div>
+      <button class="btn danger" data-rmwrong="${q.id}">移除</button>
+    </div>
+  `).join("");
+  $$('[data-rmwrong]').forEach(b => b.onclick = () => { removeWrong(b.dataset.rmwrong); renderWrong(); });
+}
+$("#clearWrong").onclick = () => {
+  if(!confirm("清空错题本？")) return;
+  patchUserData({wrong:[]});
+  renderWrong();
+};
+$("#practiceWrong").onclick = () => {
+  const d = loadUserData();
+  if(!d.wrong.length){ alert("错题本是空的"); return; }
+  practiceList = d.wrong.map(id => QUESTIONS.find(q=>q.id===id)).filter(Boolean);
+  currentIndex = 0;
+  $$("#tabs button").forEach(x => x.classList.remove("active"));
+  document.querySelector('#tabs button[data-tab="practice"]').classList.add("active");
+  ["practice","exam","wrong","search","all"].forEach(t => $("#tab-" + t).hidden = (t !== "practice"));
+  renderPractice();
+};
+
+/* ============================================================
+ *  搜索
+ * ============================================================ */
+$("#searchInput").addEventListener("input", e => {
+  const kw = e.target.value.trim().toLowerCase();
+  if(!kw){ $("#searchList").innerHTML = '<div class="empty">输入关键词开始搜索</div>'; return; }
+  const hits = QUESTIONS.filter(q =>
+    q.question.toLowerCase().includes(kw) || q.answer.toLowerCase().includes(kw) || q.category.toLowerCase().includes(kw)
+  );
+  if(!hits.length){ $("#searchList").innerHTML = '<div class="empty">未找到匹配结果</div>'; return; }
+  $("#searchList").innerHTML = `<div style="padding:10px 14px;color:var(--mute);font-size:13px">命中 ${hits.length} 题</div>` + hits.map(q => `
+    <div class="listitem">
+      <div class="lq">
+        <div><span class="pill cat">${q.category}</span> <strong>${highlight(q.question, kw)}</strong></div>
+        <details open><summary>答案</summary><div style="margin-top:6px;color:#bbf7d0">${highlight(q.answer, kw)}</div></details>
+      </div>
+    </div>
+  `).join("");
+});
+function highlight(text, kw){
+  const safe = escapeHtml(text);
+  if(!kw) return safe;
+  const re = new RegExp("(" + kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ")", "ig");
+  return safe.replace(re, '<mark style="background:rgba(34,211,238,.3);color:#fff;padding:0 2px;border-radius:3px">$1</mark>');
+}
+
+/* ============================================================
+ *  全部题目
+ * ============================================================ */
+function renderAll(){
+  const stats = CATEGORIES.map(c => ({
+    cat: c, n: QUESTIONS.filter(q => q.category === c).length
+  }));
+  $("#catStats").innerHTML = stats.map(s =>
+    `<div class="stat"><div class="num">${s.n}</div><div class="lbl">${s.cat}</div></div>`
+  ).join("");
+  $("#allList").innerHTML = QUESTIONS.map(q => `
+    <div class="listitem">
+      <div class="lq">
+        <div><span class="pill">#${q.no}</span> <span class="pill cat">${q.category}</span> <strong>${escapeHtml(q.question)}</strong></div>
+        <details><summary>答案</summary><div style="margin-top:6px;color:#bbf7d0">${escapeHtml(q.answer)}</div></details>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ============================================================
+ *  用户切换
+ * ============================================================ */
+$("#userName").addEventListener("change", e => {
+  currentUser = e.target.value.trim();
+  localStorage.setItem(STORE_PREFIX + "__lastUser", currentUser);
+  initUser();
+});
+function initUser(){
+  const d = loadUserData();
+  currentIndex = d.practiceIdx || 0;
+  rebuildPracticeList();
+  renderPractice();
+}
+
+/* ============================================================
+ *  启动
+ * ============================================================ */
+function boot(){
+  $("#totalQs").textContent = QUESTIONS.length;
+  fillCategorySelects();
+  currentUser = localStorage.getItem(STORE_PREFIX + "__lastUser") || "";
+  $("#userName").value = currentUser;
+  initUser();
+}
+boot();
+</script>
+</body>
+</html>
