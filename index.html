@@ -79,7 +79,9 @@
     <h1>欧易商家考试 · 刷题工具<span class="sub">本地进度自动保存 · 多人各自双击使用</span></h1>
     <div class="user-bar">
       <span>👤 当前用户</span>
-      <input id="userName" placeholder="昵称" maxlength="12" />
+      <input id="userName" placeholder="输入昵称" maxlength="12" />
+      <button class="btn primary" id="confirmUser" style="padding:6px 14px">确认</button>
+      <span id="userHint" style="color:var(--ok);font-size:12px;min-width:64px;transition:opacity .4s"></span>
       <span title="不同昵称的进度互相独立">🔒</span>
     </div>
   </header>
@@ -605,11 +607,22 @@ function renderAll(){
 /* ============================================================
  *  用户切换
  * ============================================================ */
-$("#userName").addEventListener("change", e => {
-  currentUser = e.target.value.trim();
+function confirmUser(){
+  const name = $("#userName").value.trim();
+  currentUser = name;
   localStorage.setItem(STORE_PREFIX + "__lastUser", currentUser);
   initUser();
+  const hint = $("#userHint");
+  hint.textContent = "✅ " + (name || "默认") + " 已就绪";
+  hint.style.opacity = "1";
+  clearTimeout(window.__hintTimer);
+  window.__hintTimer = setTimeout(() => { hint.style.opacity = "0"; }, 2500);
+}
+$("#confirmUser").addEventListener("click", confirmUser);
+$("#userName").addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); confirmUser(); $("#userName").blur(); }
 });
+$("#userName").addEventListener("change", confirmUser);
 function initUser(){
   const d = loadUserData();
   currentIndex = d.practiceIdx || 0;
